@@ -1,19 +1,21 @@
-import { configureStore } from "@reduxjs/toolkit";
-import productReducer from "./slices/productSlice";
-import cartReducer from "./slices/cartSlice";
-import userReducer from "./slices/userSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import productReducer from './slices/productSlice';
+import cartReducer from './slices/cartSlice';
+import userReducer from './slices/userSlice';
+import filterReducer from './slices/filterSlice';
 
 export const store = configureStore({
   reducer: {
     products: productReducer,
     cart: cartReducer,
     user: userReducer,
+    filters: filterReducer,
   },
 });
 
 store.subscribe(() => {
   const { cart } = store.getState();
-  localStorage.setItem("cart", JSON.stringify(cart.items));
+  localStorage.setItem('cart', JSON.stringify(cart.items));
 });
 
 export type RootState = ReturnType<typeof store.getState>;

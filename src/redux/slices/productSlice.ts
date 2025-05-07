@@ -1,6 +1,6 @@
-// src/redux/slices/productSlice.ts
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { api } from '../../services/api';
 
 export interface Product {
   id: number;
@@ -8,52 +8,45 @@ export interface Product {
   description: string;
   price: number;
   image: string;
+  category: string;
 }
 
 interface ProductState {
   items: Product[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: ProductState = {
-  items: [
-    {
-      id: 1,
-      title: "Camiseta Estilosa",
-      description: "Camiseta 100% algodão, super confortável.",
-      price: 79.9,
-      image: "/images/camiseta.jpg",
-    },
-    {
-      id: 2,
-      title: "Tênis Esportivo",
-      description: "Perfeito para corridas e treinos.",
-      price: 249.9,
-      image: "/images/tenis.jpg",
-    },
-  ],
+  items: [],
+  status: 'idle',
+  error: null,
 };
 
+// Async thunk to fetch products
+export const fetchProducts = createAsyncThunk<Product[]>('products/fetchProducts', async () => {
+  const response = await api.get<Product[]>('/products');
+  return response.data;
+});
+
 export const productSlice = createSlice({
-  name: "products",
+  name: 'products',
   initialState,
-  reducers: {
-    addProduct(state, action: PayloadAction<Product>) {
-      state.items.push(action.payload);
-    },
-    updateProduct(state, action: PayloadAction<Product>) {
-      const index = state.items.findIndex(p => p.id === action.payload.id);
-      if (index !== -1) {
-        state.items[index] = action.payload;
-      }
-    },
-    removeProduct(state, action: PayloadAction<number>) {
-      state.items = state.items.filter(p => p.id !== action.payload);
-    },
-    setProducts(state, action: PayloadAction<Product[]>) {
-      state.items = action.payload;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to load products';
+      });
   },
 });
 
-export const { addProduct, updateProduct, removeProduct, setProducts } = productSlice.actions;
 export default productSlice.reducer;
