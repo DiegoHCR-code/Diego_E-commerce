@@ -1,4 +1,3 @@
-// src/redux/slices/cartSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Product } from "./productSlice";
@@ -11,8 +10,12 @@ interface CartState {
   items: CartItem[];
 }
 
+// Carregar carrinho do localStorage
+const storedCart = localStorage.getItem("cart");
+const initialItems: CartItem[] = storedCart ? JSON.parse(storedCart) : [];
+
 const initialState: CartState = {
-  items: [],
+  items: initialItems,
 };
 
 export const cartSlice = createSlice({
@@ -32,9 +35,7 @@ export const cartSlice = createSlice({
     },
     increaseQuantity(state, action: PayloadAction<number>) {
       const item = state.items.find(item => item.id === action.payload);
-      if (item) {
-        item.quantity += 1;
-      }
+      if (item) item.quantity += 1;
     },
     decreaseQuantity(state, action: PayloadAction<number>) {
       const item = state.items.find(item => item.id === action.payload);
@@ -52,12 +53,5 @@ export const cartSlice = createSlice({
   },
 });
 
-export const {
-  addToCart,
-  removeFromCart,
-  increaseQuantity,
-  decreaseQuantity,
-  clearCart,
-} = cartSlice.actions;
-
+export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
