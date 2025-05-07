@@ -6,13 +6,8 @@ import { clearCart } from "../../redux/slices/cartSlice";
 import { api } from "../../services/api";
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
-import {
-  Container,
-  Form,
-  Field,
-  Summary,
-  Item,
-} from "./Checkout.styles";
+import { toast } from "react-toastify";
+import { Container, Form, Field, Summary, Item } from "./Checkout.styles";
 
 const Checkout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +22,10 @@ const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,14 +38,21 @@ const Checkout: React.FC = () => {
     try {
       const payload = {
         userId: user.id,
-        items: items.map(i => ({ productId: i.id.toString(), quantity: i.quantity })),
+        items: items.map((i) => ({
+          productId: i.id.toString(),
+          quantity: i.quantity,
+        })),
       };
+
       await api.post("/orders", payload);
       dispatch(clearCart());
+      toast.success("Pedido confirmado com sucesso!");
       navigate("/", { replace: true });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Erro ao processar o pedido.";
+      const message =
+        err instanceof Error ? err.message : "Erro ao processar o pedido.";
       setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -63,7 +68,7 @@ const Checkout: React.FC = () => {
             id="name"
             placeholder="Seu nome"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             required
           />
         </Field>
@@ -73,7 +78,7 @@ const Checkout: React.FC = () => {
             id="address"
             placeholder="Rua, número, complemento"
             value={address}
-            onChange={e => setAddress(e.target.value)}
+            onChange={(e) => setAddress(e.target.value)}
             required
           />
         </Field>
@@ -83,7 +88,7 @@ const Checkout: React.FC = () => {
             id="city"
             placeholder="Sua cidade"
             value={city}
-            onChange={e => setCity(e.target.value)}
+            onChange={(e) => setCity(e.target.value)}
             required
           />
         </Field>
@@ -93,11 +98,11 @@ const Checkout: React.FC = () => {
             id="zip"
             placeholder="00000-000"
             value={zip}
-            onChange={e => setZip(e.target.value)}
+            onChange={(e) => setZip(e.target.value)}
             required
           />
         </Field>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <Button type="submit" variant="primary" disabled={loading}>
           {loading ? "Processando..." : "Confirmar Pedido"}
         </Button>
@@ -105,9 +110,11 @@ const Checkout: React.FC = () => {
 
       <Summary>
         <h2>Resumo do Pedido</h2>
-        {items.map(item => (
+        {items.map((item) => (
           <Item key={item.id}>
-            <span>{item.title} x {item.quantity}</span>
+            <span>
+              {item.title} x {item.quantity}
+            </span>
             <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
           </Item>
         ))}
