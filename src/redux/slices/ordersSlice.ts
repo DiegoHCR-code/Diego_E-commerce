@@ -27,6 +27,7 @@ const initialState: OrdersState = {
   error: null,
 };
 
+// Thunk to fetch orders by user
 export const fetchOrdersByUser = createAsyncThunk<Order[], string>(
   'orders/fetchOrdersByUser',
   async (userId) => {

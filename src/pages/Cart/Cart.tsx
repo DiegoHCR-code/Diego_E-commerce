@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../redux/store";
 import {
   removeFromCart,
@@ -22,14 +23,21 @@ import {
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const items = useSelector((state: RootState) => state.cart.items);
-
   const theme = useTheme();
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const handleCheckout = () => {
+    // Se quiser, você pode validar se há itens antes de navegar
+    if (items.length > 0) {
+      navigate("/checkout");
+    }
+  };
 
   return (
     <Container>
@@ -82,7 +90,7 @@ const Cart: React.FC = () => {
             <p>
               Subtotal: <strong>R$ {subtotal.toFixed(2)}</strong>
             </p>
-            <Button variant="primary" onClick={() => alert("Finalizar compra!") }>
+            <Button variant="primary" onClick={handleCheckout}>
               Finalizar Compra
             </Button>
             <Button

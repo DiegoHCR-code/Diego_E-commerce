@@ -24,6 +24,8 @@ const Navbar: React.FC = () => {
           {cartCount > 0 && <CartCount>{cartCount}</CartCount>}
         </StyledLink>
         <StyledLink to="/profile">Perfil</StyledLink>
+        <StyledLink to="/admin/new-product">Novo Produto</StyledLink>
+
       </NavLinks>
     </Nav>
   );

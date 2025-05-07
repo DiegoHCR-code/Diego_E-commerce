@@ -1,44 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../../redux/store';
-import type { Product } from '../../redux/slices/productSlice';
-import { fetchProducts } from '../../redux/slices/productSlice';
-import { addToCart } from '../../redux/slices/cartSlice';
+// src/pages/Home.tsx
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState, AppDispatch } from "../../redux/store";
+import type { Product } from "../../redux/slices/productSlice";
+import { fetchProducts } from "../../redux/slices/productSlice";
+import { addToCart } from "../../redux/slices/cartSlice";
 
-import Card from '../../components/UI/Card/Card';
-import Button from '../../components/UI/Button/Button';
-import Input from '../../components/UI/Input/Input';
-import FilterPanel from '../../components/Filters/FilterPanel';
-import SkeletonCard from '../../components/UI/SkeletonCard/SkeletonCard';
+import Card from "../../components/UI/Card/Card";
+import Button from "../../components/UI/Button/Button";
+import Input from "../../components/UI/Input/Input";
+import FilterPanel from "../../components/Filters/FilterPanel";
+import SkeletonCard from "../../components/UI/SkeletonCard/SkeletonCard";
 
-import { Container, Grid } from './Home.styles';
-import { motion } from 'framer-motion';
+import { Container, Grid } from "./Home.styles";
+import { motion } from "framer-motion";
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items: products, status, error } = useSelector((state: RootState) => state.products);
-  const { selectedCategories, priceRange } = useSelector((state: RootState) => state.filters);
+  const navigate = useNavigate();
 
-  const [search, setSearch] = useState('');
+  const {
+    items: products,
+    status,
+    error,
+  } = useSelector((state: RootState) => state.products);
+  const { selectedCategories, priceRange } = useSelector(
+    (state: RootState) => state.filters
+  );
 
-  // Busca produtos na API se ainda não carregados
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === "idle") {
       dispatch(fetchProducts());
     }
   }, [status, dispatch]);
 
-  // Filtra por busca, categoria e preço
   const filtered = products.filter(
     (p) =>
       p.title.toLowerCase().includes(search.toLowerCase()) &&
-      (selectedCategories.length ? selectedCategories.includes(p.category) : true) &&
+      (selectedCategories.length
+        ? selectedCategories.includes(p.category)
+        : true) &&
       p.price >= priceRange[0] &&
       p.price <= priceRange[1]
   );
 
   const handleAddToCart = (product: Product) => {
     dispatch(addToCart(product));
+    navigate("/cart");
   };
 
   return (
@@ -47,12 +58,11 @@ const Home: React.FC = () => {
         placeholder="Buscar produto..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{ maxWidth: '300px', marginBottom: '1.5rem' }}
+        style={{ maxWidth: "300px", marginBottom: "1.5rem" }}
       />
       <FilterPanel />
 
-      {/* Exibe skeletons enquanto carrega */}
-      {status === 'loading' && (
+      {status === "loading" && (
         <Grid>
           {Array.from({ length: 6 }).map((_, idx) => (
             <SkeletonCard key={idx} />
@@ -60,11 +70,9 @@ const Home: React.FC = () => {
         </Grid>
       )}
 
-      {/* Mensagem de erro */}
-      {status === 'failed' && <p>Erro ao carregar produtos: {error}</p>}
+      {status === "failed" && <p>Erro ao carregar produtos: {error}</p>}
 
-      {/* Lista de produtos carregados */}
-      {status === 'succeeded' && (
+      {status === "succeeded" && (
         <Grid>
           {filtered.map((product, i) => (
             <motion.div
@@ -75,19 +83,23 @@ const Home: React.FC = () => {
             >
               <Card>
                 <img
-                  src={product.image}
+                  src={`${product.image}`}
                   alt={product.title}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
                 />
-                <div style={{ padding: '1rem' }}>
+                <div style={{ padding: "1rem" }}>
                   <h2>{product.title}</h2>
-                  <p style={{ color: '#666', margin: '0.5rem 0' }}>
+                  <p style={{ color: "#666", margin: "0.5rem 0" }}>
                     {product.description}
                   </p>
-                  <strong style={{ display: 'block', marginBottom: '1rem' }}>
+                  <strong style={{ display: "block", marginBottom: "1rem" }}>
                     R$ {product.price.toFixed(2)}
                   </strong>
-                  <Button variant="accent" onClick={() => handleAddToCart(product)}>
+                  <Button
+                    variant="accent"
+                    onClick={() => handleAddToCart(product)}
+                    style={{ backgroundColor: "#007bff", color: "#fff" }}
+                  >
                     Adicionar ao carrinho
                   </Button>
                 </div>

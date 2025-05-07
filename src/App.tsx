@@ -11,7 +11,7 @@ import Checkout from './pages/Checkout/Checkout';
 import Profile from './pages/Profile/Profile';
 import Login from './pages/Login/Login';
 import PrivateRoute from './components/PrivateRoute';
-
+import NewProduct from './pages/NewProduct/NewProduct';
 function App() {
   return (
     <>
@@ -28,7 +28,8 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/profile" element={<Profile />} />
-            </Route>
+              <Route path="/admin/new-product" element={<NewProduct />} />
+              </Route>
             <Route path="*" element={<Home />} />
           </Routes>
         </Router>
