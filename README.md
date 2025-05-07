@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# Diego_E-commerce
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é um projeto de E-commerce desenvolvido com **React**, **TypeScript**, **Vite**, **Redux Toolkit** e **styled-components**. Ideal para portfólio.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `npm install` — instala dependências
+- `npm run dev` — inicia em modo de desenvolvimento
+- `npm run build` — gera a versão de produção
+- `npm run preview` — pré-visualiza o build
 
-## Expanding the ESLint configuration
+## Tecnologias
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React + Vite + TypeScript
+- Redux Toolkit
+- styled-components
+- React Router
+- Axios
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Estrutura
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `src` — código fonte do projeto
+  - `assets` — imagens e ícones
+  - `components` — componentes reutilizáveis
+  - `hooks` — hooks personalizados
+  - `pages` — páginas do projeto
+  - `redux` — configuração do Redux Toolkit
+  - `styles` — estilos globais
+  - `types` — tipos TypeScript personalizados
+  - `utils` — funções utilitárias
+  - `App.tsx` — componente principal do projeto
+  - `main.tsx` — ponto de entrada do projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Como usar
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Clone o repositório
+2. `npm install`
+3. `npm run dev`
+4. Acesse `http://localhost:5173`
+5. Explore o projeto e faça suas modificações
