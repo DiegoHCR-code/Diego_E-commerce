@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "../../redux/store";
 import { clearCart } from "../../redux/slices/cartSlice";
+import { api } from "../../services/api";
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
 import {
@@ -17,18 +18,39 @@ const Checkout: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const items = useSelector((state: RootState) => state.cart.items);
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const user = useSelector((state: RootState) => state.user.currentUser);
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(user?.name || "");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearCart());
-    alert(`Obrigado pela compra, ${name}! Total: R$ ${total.toFixed(2)}`);
-    navigate("/");
+    if (!user) {
+      setError("Você precisa estar logado para finalizar o pedido.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        userId: user.id,
+        items: items.map(i => ({ productId: i.id.toString(), quantity: i.quantity })),
+      };
+      await api.post("/orders", payload);
+      dispatch(clearCart());
+      navigate("/", { replace: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erro ao processar o pedido.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +63,7 @@ const Checkout: React.FC = () => {
             id="name"
             placeholder="Seu nome"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             required
           />
         </Field>
@@ -51,7 +73,7 @@ const Checkout: React.FC = () => {
             id="address"
             placeholder="Rua, número, complemento"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={e => setAddress(e.target.value)}
             required
           />
         </Field>
@@ -61,7 +83,7 @@ const Checkout: React.FC = () => {
             id="city"
             placeholder="Sua cidade"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={e => setCity(e.target.value)}
             required
           />
         </Field>
@@ -71,18 +93,19 @@ const Checkout: React.FC = () => {
             id="zip"
             placeholder="00000-000"
             value={zip}
-            onChange={(e) => setZip(e.target.value)}
+            onChange={e => setZip(e.target.value)}
             required
           />
         </Field>
-        <Button type="submit" variant="primary">
-          Confirmar Pedido
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <Button type="submit" variant="primary" disabled={loading}>
+          {loading ? "Processando..." : "Confirmar Pedido"}
         </Button>
       </Form>
 
       <Summary>
         <h2>Resumo do Pedido</h2>
-        {items.map((item) => (
+        {items.map(item => (
           <Item key={item.id}>
             <span>{item.title} x {item.quantity}</span>
             <span>R$ {(item.price * item.quantity).toFixed(2)}</span>

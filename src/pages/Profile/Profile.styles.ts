@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const Container = styled.div`
   max-width: 600px;
@@ -23,4 +23,32 @@ export const StyledLink = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+export const OrdersContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.lg};
+`;
+
+export const OrderCard = styled.div`
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
+export const OrderHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const OrderItems = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+export const OrderItemRow = styled.li`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
 `;
